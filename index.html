@@ -454,6 +454,8 @@ footer a:hover {
       <select id="axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
         <option value="title">Başlığa görə</option>
         <option value="category">Kateqoriyaya görə</option>
+        <option value="Date">Tarixə görə</option>
+        <option value="View">Baxış sayına görə</option>
       </select>
       <input id="axtaris" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
     </div>
@@ -524,6 +526,12 @@ function xeberleriGoster() {
     if (axtarisTipi === "category") {
       return (n.category || "").toLowerCase().includes(soz);
     }
+    if (axtarisTipi === "Date") {
+      return (n.Date || "").toLowerCase().includes(soz);
+    }
+    if (axtarisTipi === "View") {
+      return String(n.View ?? 0).toLowerCase().includes(soz);
+    }
     return (n.title || "").toLowerCase().includes(soz);
   });
 
@@ -592,8 +600,14 @@ axtarisInputEl.addEventListener("input", (e) => {
 });
 
 if (axtarisTipiEl) {
+  const placeholderler = {
+    title: "Başlığa görə axtar...",
+    category: "Kateqoriyaya görə axtar...",
+    Date: "Tarixə görə axtar...",
+    View: "Baxış sayına görə axtar...",
+  };
   axtarisTipiEl.addEventListener("change", () => {
-    axtarisInputEl.placeholder = axtarisTipiEl.value === "category" ? "Kateqoriyaya görə axtar..." : "Başlığa görə axtar...";
+    axtarisInputEl.placeholder = placeholderler[axtarisTipiEl.value] || "Axtar...";
     xeberleriGoster();
   });
 }

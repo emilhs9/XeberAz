@@ -655,6 +655,8 @@ pre {
             <select id="admin-axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
               <option value="title">Başlığa görə</option>
               <option value="category">Kateqoriyaya görə</option>
+              <option value="Date">Tarixə görə</option>
+              <option value="View">Baxış sayına görə</option>
             </select>
             <input id="admin-axtaris-input" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
           </div>
@@ -826,6 +828,12 @@ function cedveliYenile() {
     if (axtarisTipi === "category") {
       return (n.category || "").toLowerCase().includes(soz);
     }
+    if (axtarisTipi === "Date") {
+      return (n.Date || "").toLowerCase().includes(soz);
+    }
+    if (axtarisTipi === "View") {
+      return String(n.View ?? 0).toLowerCase().includes(soz);
+    }
     return (n.title || "").toLowerCase().includes(soz);
   });
 
@@ -862,9 +870,15 @@ if (adminAxtarisInput) {
   adminAxtarisInput.addEventListener("input", cedveliYenile);
 }
 if (adminAxtarisTipi) {
+  const placeholderler = {
+    title: "Başlığa görə axtar...",
+    category: "Kateqoriyaya görə axtar...",
+    Date: "Tarixə görə axtar...",
+    View: "Baxış sayına görə axtar...",
+  };
   adminAxtarisTipi.addEventListener("change", () => {
     if (adminAxtarisInput) {
-      adminAxtarisInput.placeholder = adminAxtarisTipi.value === "category" ? "Kateqoriyaya görə axtar..." : "Başlığa görə axtar...";
+      adminAxtarisInput.placeholder = placeholderler[adminAxtarisTipi.value] || "Axtar...";
     }
     cedveliYenile();
   });
