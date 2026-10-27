@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XəbərAz — Son xəbərlər</title>
+<style>
+:root {
+  --qara: #000000;
+  --arxaplan: #09090b;
+  --kart-arxaplan: #111113;
+  --panel-arxaplan: #17171a;
+  --xett: #232328;
+  --xett-aktiv: #38383e;
+  --metn: #ededed;
+  --solgun: #80808a;
+  --ag: #ffffff;
+  --boz: #27272a;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--arxaplan);
+  color: var(--metn);
+  line-height: 1.5;
+}
+.konteyner {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 16px;
+}
+.ust-hisse {
+  background: var(--arxaplan);
+  border-bottom: 1px solid var(--xett);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.ust-zolaq {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.loqo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ag);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+.loqo span {
+  color: var(--solgun);
+  font-weight: 600;
+}
+#axtaris {
+  padding: 9px 16px;
+  border: 1px solid var(--xett);
+  border-radius: 20px;
+  background: var(--kart-arxaplan);
+  color: var(--metn);
+  width: 240px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.2s, width 0.2s;
+}
+#axtaris:focus {
+  border-color: var(--ag);
+  width: 300px;
+}
+.kateqoriyalar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+.kateqoriyalar a {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: var(--solgun);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.kateqoriyalar a:hover {
+  color: var(--ag);
+  background: var(--panel-arxaplan);
+  border-color: var(--xett);
+}
+.kateqoriyalar a.aktiv {
+  background: var(--ag);
+  color: var(--qara);
+  border-color: var(--ag);
+  font-weight: 600;
+}
+.esas-qurulus {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 28px;
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+.bolme-basligi {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  margin: 24px 0 14px;
+  padding-left: 10px;
+  border-left: 3px solid var(--ag);
+  color: var(--ag);
+}
+.esas-qurulus > section > .bolme-basligi:first-child,
+.yan-hisse .bolme-basligi {
+  margin-top: 0;
+}
+.kart-sekil {
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  min-height: 150px;
+}
+.yer-tutucu {
+  display: grid;
+  place-items: center;
+  color: #ffffff22;
+  font-size: 64px;
+  font-weight: 800;
+}
+.reng-0 {
+  background: linear-gradient(135deg, #1c1c20, #0d0d0f);
+}
+.reng-1 {
+  background: linear-gradient(135deg, #27272c, #141417);
+}
+.reng-2 {
+  background: linear-gradient(135deg, #1f1f24, #101013);
+}
+.reng-3 {
+  background: linear-gradient(135deg, #2b2b32, #161619);
+}
+.reng-4 {
+  background: linear-gradient(135deg, #232328, #111114);
+}
+.etiket {
+  display: inline-block;
+  background: var(--boz);
+  color: #d4d4d8;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  border: 1px solid var(--xett);
+}
+small {
+  color: var(--solgun);
+  font-size: 12px;
+}
+.manset-karti {
+  position: relative;
+  height: 350px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--xett);
+  animation: yuxari-surus 0.4s both;
+}
+.manset-karti .kart-sekil {
+  transition: transform 0.4s;
+}
+.manset-karti:hover .kart-sekil {
+  transform: scale(1.03);
+}
+.qapaq-qati {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 60px 24px 22px;
+  background: linear-gradient(transparent, #000000f2);
+  color: var(--ag);
+}
+.qapaq-qati h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 6px 0;
+  line-height: 1.3;
+}
+.qapaq-qati small {
+  color: #a1a1aa;
+}
+.xeber-toru {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.xeber-karti {
+  background: var(--kart-arxaplan);
+  border: 1px solid var(--xett);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  animation: yuxari-surus 0.4s both;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.xeber-karti:hover {
+  border-color: var(--xett-aktiv);
+  transform: translateY(-3px);
+}
+.xeber-karti .kart-sekil {
+  height: 135px;
+  min-height: 0;
+}
+.xeber-karti .yer-tutucu {
+  font-size: 44px;
+}
+.kart-melumat {
+  padding: 14px;
+}
+.kart-melumat h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 4px 0 8px;
+  line-height: 1.4;
+  color: var(--ag);
+}
+.cox-oxunan-siyahi {
+  list-style: none;
+  counter-reset: nomre;
+  background: var(--kart-arxaplan);
+  border: 1px solid var(--xett);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cox-oxunan-siyahi li {
+  counter-increment: nomre;
+  padding: 13px 14px 13px 44px;
+  position: relative;
+  cursor: pointer;
+  border-bottom: 1px solid var(--xett);
+  transition: background 0.2s;
+}
+.cox-oxunan-siyahi li:last-child {
+  border: 0;
+}
+.cox-oxunan-siyahi li:hover {
+  background: var(--panel-arxaplan);
+}
+.cox-oxunan-siyahi li:before {
+  content: counter(nomre);
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--solgun);
+}
+.cox-oxunan-siyahi b {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--metn);
+}
+.veziyyet-metni {
+  text-align: center;
+  color: var(--solgun);
+  padding: 36px;
+  font-size: 14px;
+}
+.modal-pencere {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+.modal-pencere.gorunur {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-qutu {
+  background: var(--kart-arxaplan);
+  border: 1px solid var(--xett);
+  max-width: 640px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  transform: translateY(16px);
+  transition: transform 0.2s;
+}
+.modal-pencere.gorunur .modal-qutu {
+  transform: none;
+}
+.modal-qutu .kart-sekil {
+  height: 240px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid var(--xett);
+}
+.modal-qutu h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ag);
+  margin: 6px 0 10px;
+  line-height: 1.35;
+}
+.modal-qutu p {
+  margin-top: 16px;
+  color: #d4d4d8;
+  line-height: 1.7;
+  font-size: 15px;
+}
+.bagla-duyme {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  border: 1px solid var(--xett);
+  background: var(--panel-arxaplan);
+  color: var(--ag);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, border-color 0.2s;
+  z-index: 2;
+}
+.bagla-duyme:hover {
+  background: var(--boz);
+  border-color: var(--ag);
+}
+footer {
+  border-top: 1px solid var(--xett);
+  padding: 24px 0;
+  text-align: center;
+  color: var(--solgun);
+  font-size: 13px;
+}
+footer a {
+  color: var(--ag);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--solgun);
+  padding-bottom: 2px;
+}
+footer a:hover {
+  color: #a1a1aa;
+}
+@keyframes yuxari-surus {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 800px) {
+  .esas-qurulus {
+    grid-template-columns: 1fr;
+  }
+  #axtaris,
+  #axtaris:focus {
+    width: 160px;
+  }
+  .manset-karti {
+    height: 270px;
+  }
+  .qapaq-qati h1 {
+    font-size: 19px;
+  }
+}
+</style>
+</head>
+<body>
+<header class="ust-hisse">
+  <div class="konteyner ust-zolaq">
+    <a href="./" class="loqo">Xəbər<span>Az</span></a>
+    <input id="axtaris" type="search" placeholder="Xəbər axtar...">
+  </div>
+  <nav class="konteyner kateqoriyalar" id="kateqoriyalar"></nav>
+</header>
+
+<main class="konteyner esas-qurulus">
+  <section>
+    <div id="manset"></div>
+    <h2 class="bolme-basligi">Son xəbərlər</h2>
+    <div id="xeber-toru" class="xeber-toru"></div>
+    <p id="veziyyet-metni" class="veziyyet-metni">Yüklənir...</p>
+  </section>
+  <aside class="yan-hisse">
+    <h2 class="bolme-basligi">Ən çox oxunan</h2>
+    <ol id="cox-oxunanlar" class="cox-oxunan-siyahi"></ol>
+  </aside>
+</main>
+
+<div id="modal-pencere" class="modal-pencere"><div class="modal-qutu">
+  <button class="bagla-duyme" id="bagla-duyme">×</button>
+  <div id="meqale-mezmunu"></div>
+</div></div>
+
+<footer><div class="konteyner">created by emilhs9</div></footer>
+
+<script>
+const API = "https://6ae06420be3bc8fead970ef0.mockapi.io/news/News";
+
+async function sorgu(metod = "GET", id = "", gonderilenMelumat) {
+  const cavab = await fetch(API + (id ? "/" + id : ""), {
+    method: metod,
+    headers: { "Content-Type": "application/json" },
+    body: gonderilenMelumat ? JSON.stringify(gonderilenMelumat) : undefined,
+  });
+  if (!cavab.ok) throw new Error("Server xətası: " + cavab.status);
+  return cavab.json();
+}
+const xeberleriGetir = () => sorgu();
+const xeberDeyis = (id, d) => sorgu("PUT", id, d);
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let butunXeberler = [], secilmisKateqoriya = "Hamısı", axtarisSozu = "";
+
+const sekilHtml = (n) => n.image
+  ? `<div class="kart-sekil" style="background-image:url('${esc(n.image)}')"></div>`
+  : `<div class="kart-sekil yer-tutucu reng-${(parseInt(n.id) || 0) % 5}"><span>${esc((n.title || "?")[0])}</span></div>`;
+
+const kartHtml = (n, i) => `
+  <article class="xeber-karti" style="animation-delay:${Math.min(i, 12) * 40}ms" data-id="${n.id}">
+    ${sekilHtml(n)}
+    <div class="kart-melumat"><span class="etiket">${esc(n.category)}</span>
+    <h3>${esc(n.title)}</h3>
+    <small>${esc(n.Date)} · 👁 ${n.View ?? 0}</small></div>
+  </article>`;
+
+function xeberleriGoster() {
+  const siyahisi = butunXeberler.filter((n) =>
+    (secilmisKateqoriya === "Hamısı" || n.category === secilmisKateqoriya) &&
+    (n.title || "").toLowerCase().includes(axtarisSozu));
+
+  const [birinci, ...qalanlar] = siyahisi;
+  document.getElementById("manset").innerHTML = birinci ? `
+    <article class="manset-karti" data-id="${birinci.id}">
+      ${sekilHtml(birinci)}
+      <div class="qapaq-qati"><span class="etiket">${esc(birinci.category)}</span>
+      <h1>${esc(birinci.title)}</h1><small>${esc(birinci.Date)} · 👁 ${birinci.View ?? 0}</small></div>
+    </article>` : "";
+  document.getElementById("xeber-toru").innerHTML = qalanlar.map(kartHtml).join("");
+  document.getElementById("veziyyet-metni").textContent = siyahisi.length ? "" : "Xəbər tapılmadı.";
+}
+
+function coxOxunanlariGoster() {
+  const coxOxunan = [...butunXeberler].sort((a, b) => (b.View || 0) - (a.View || 0)).slice(0, 6);
+  document.getElementById("cox-oxunanlar").innerHTML = coxOxunan.map((n) =>
+    `<li data-id="${n.id}"><b>${esc(n.title)}</b><small>👁 ${n.View ?? 0}</small></li>`).join("");
+}
+
+function kateqoriyalariGoster() {
+  const kateqoriyalar = ["Hamısı", ...new Set(butunXeberler.map((n) => n.category).filter(Boolean))].slice(0, 12);
+  document.getElementById("kateqoriyalar").innerHTML = kateqoriyalar.map((k) =>
+    `<a href="#" class="${k === secilmisKateqoriya ? "aktiv" : ""}" data-kateqoriya="${esc(k)}">${esc(k)}</a>`).join("");
+}
+
+function xeberiAc(id) {
+  const n = butunXeberler.find((x) => x.id === id);
+  if (!n) return;
+  n.View = (n.View || 0) + 1;
+  document.getElementById("meqale-mezmunu").innerHTML = `${sekilHtml(n)}<span class="etiket">${esc(n.category)}</span>
+    <h1>${esc(n.title)}</h1><small>${esc(n.Date)} · 👁 ${n.View}</small>
+    <p>${esc(n.content || "Bu xəbər üçün ətraflı mətn əlavə edilməyib.")}</p>`;
+  document.getElementById("modal-pencere").classList.add("gorunur");
+  document.body.style.overflow = "hidden";
+  xeberDeyis(id, { View: n.View }).then(coxOxunanlariGoster).catch(() => {});
+}
+
+const modaliBagla = () => {
+  document.getElementById("modal-pencere").classList.remove("gorunur");
+  document.body.style.overflow = "";
+};
+
+document.addEventListener("click", (e) => {
+  const k = e.target.closest("[data-kateqoriya]");
+  if (k) {
+    e.preventDefault();
+    secilmisKateqoriya = k.dataset.kateqoriya;
+    kateqoriyalariGoster();
+    xeberleriGoster();
+    return;
+  }
+  if (e.target.id === "modal-pencere" || e.target.id === "bagla-duyme") return modaliBagla();
+  const kart = e.target.closest("[data-id]");
+  if (kart) xeberiAc(kart.dataset.id);
+});
+
+document.addEventListener("keydown", (e) => e.key === "Escape" && modaliBagla());
+document.getElementById("axtaris").addEventListener("input", (e) => {
+  axtarisSozu = e.target.value.toLowerCase();
+  xeberleriGoster();
+});
+
+(async () => {
+  try {
+    butunXeberler = (await xeberleriGetir()).sort((a, b) => b.id - a.id);
+    kateqoriyalariGoster();
+    xeberleriGoster();
+    coxOxunanlariGoster();
+  } catch (err) {
+    document.getElementById("veziyyet-metni").textContent = "Xəbərlər yüklənmədi. Bir az sonra yenidən yoxlayın.";
+  }
+})();
+</script>
+</body>
+</html>
