@@ -235,9 +235,52 @@ h2 small {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 18px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .bolme-basliq-qati h2 {
   margin: 0;
+}
+.axtaris-qrupu {
+  display: flex;
+  align-items: center;
+  background: var(--panel-arxaplan);
+  border: 1px solid var(--xett);
+  border-radius: 8px;
+  padding: 2px 8px 2px 10px;
+  transition: border-color 0.2s;
+}
+.axtaris-qrupu:focus-within {
+  border-color: var(--ag);
+}
+.axtaris-select {
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--xett);
+  color: var(--solgun);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 8px 6px 0;
+  margin-right: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.axtaris-select:hover, .axtaris-select:focus {
+  color: var(--ag);
+}
+.axtaris-select option {
+  background: var(--kart-arxaplan);
+  color: var(--metn);
+}
+#admin-axtaris-input {
+  border: none;
+  background: transparent;
+  color: var(--metn);
+  width: 170px;
+  outline: none;
+  font-size: 13px;
+  padding: 6px 4px;
 }
 .duyme {
   background: var(--ag);
@@ -607,7 +650,16 @@ pre {
     <section id="xeberler" class="gorunus-bolmesi">
       <div class="bolme-basliq-qati">
         <h2>Xəbərlər <small id="xeber-sayi"></small></h2>
-        <button id="yeni-xeber-ac-duyme" class="duyme">➕ Əlavə et (API)</button>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="axtaris-qrupu">
+            <select id="admin-axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
+              <option value="title">Başlığa görə</option>
+              <option value="category">Kateqoriyaya görə</option>
+            </select>
+            <input id="admin-axtaris-input" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
+          </div>
+          <button id="yeni-xeber-ac-duyme" class="duyme">➕ Əlavə et (API)</button>
+        </div>
       </div>
       <div class="cedvel-konteyner">
         <table>
@@ -764,22 +816,58 @@ document.getElementById("cixis-duyme").addEventListener("click", () => {
   paneliYenile();
 });
 
+function cedveliYenile() {
+  const setirler = document.getElementById("cedvel-setirleri");
+  const axtarisTipi = document.getElementById("admin-axtaris-tipi") ? document.getElementById("admin-axtaris-tipi").value : "title";
+  const soz = (document.getElementById("admin-axtaris-input")?.value || "").trim().toLowerCase();
+
+  const filtrlenmis = xeberSiyahisi.filter((n) => {
+    if (!soz) return true;
+    if (axtarisTipi === "category") {
+      return (n.category || "").toLowerCase().includes(soz);
+    }
+    return (n.title || "").toLowerCase().includes(soz);
+  });
+
+  if (filtrlenmis.length === 0) {
+    setirler.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--solgun)">Məlumat tapılmadı</td></tr>`;
+    return;
+  }
+
+  setirler.innerHTML = filtrlenmis.map((n, i) => `
+    <tr style="animation-delay:${Math.min(i, 15) * 20}ms">
+      <td>${esc(n.id)}</td><td>${esc(n.title)}</td><td>${esc(n.Date)}</td>
+      <td><button class="emeliyyat-duymesi" data-redakte="${n.id}" title="Dəyiş">✏️</button></td>
+      <td><button class="emeliyyat-duymesi" data-sil="${n.id}" title="Sil">🗑️</button></td>
+    </tr>`).join("");
+}
+
 async function xeberleriYukle() {
   const setirler = document.getElementById("cedvel-setirleri");
   setirler.innerHTML = `<tr><td colspan="5">Yüklənir...</td></tr>`;
   try {
     xeberSiyahisi = (await xeberleriGetir()).sort((a, b) => b.id - a.id);
     document.getElementById("xeber-sayi").textContent = `(${xeberSiyahisi.length})`;
-    setirler.innerHTML = xeberSiyahisi.map((n, i) => `
-      <tr style="animation-delay:${Math.min(i, 15) * 20}ms">
-        <td>${esc(n.id)}</td><td>${esc(n.title)}</td><td>${esc(n.Date)}</td>
-        <td><button class="emeliyyat-duymesi" data-redakte="${n.id}" title="Dəyiş">✏️</button></td>
-        <td><button class="emeliyyat-duymesi" data-sil="${n.id}" title="Sil">🗑️</button></td>
-      </tr>`).join("") || `<tr><td colspan="5">Xəbər yoxdur.</td></tr>`;
+    cedveliYenile();
     document.getElementById("kateqoriya-siyahisi").innerHTML = [...new Set(xeberSiyahisi.map((n) => n.category))].map((c) => `<option value="${esc(c)}">`).join("");
   } catch (e) {
     setirler.innerHTML = `<tr><td colspan="5" class="ugursuz">${esc(e.message)}</td></tr>`;
   }
+}
+
+const adminAxtarisInput = document.getElementById("admin-axtaris-input");
+const adminAxtarisTipi = document.getElementById("admin-axtaris-tipi");
+
+if (adminAxtarisInput) {
+  adminAxtarisInput.addEventListener("input", cedveliYenile);
+}
+if (adminAxtarisTipi) {
+  adminAxtarisTipi.addEventListener("change", () => {
+    if (adminAxtarisInput) {
+      adminAxtarisInput.placeholder = adminAxtarisTipi.value === "category" ? "Kateqoriyaya görə axtar..." : "Başlığa görə axtar...";
+    }
+    cedveliYenile();
+  });
 }
 
 function payloadGuncelle() {

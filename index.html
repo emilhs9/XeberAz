@@ -74,20 +74,50 @@ body {
   color: var(--solgun);
   font-weight: 600;
 }
-#axtaris {
-  padding: 9px 16px;
+.axtaris-qrupu {
+  display: flex;
+  align-items: center;
+  background: var(--kart-arxaplan);
   border: 1px solid var(--xett);
   border-radius: 20px;
-  background: var(--kart-arxaplan);
+  padding: 2px 8px 2px 12px;
+  transition: border-color 0.2s;
+}
+.axtaris-qrupu:focus-within {
+  border-color: var(--ag);
+}
+.axtaris-select {
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--xett);
+  color: var(--solgun);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 8px 6px 0;
+  margin-right: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.axtaris-select:hover, .axtaris-select:focus {
+  color: var(--ag);
+}
+.axtaris-select option {
+  background: var(--panel-arxaplan);
   color: var(--metn);
-  width: 240px;
+}
+#axtaris {
+  border: none;
+  background: transparent;
+  color: var(--metn);
+  width: 170px;
   outline: none;
   font-size: 14px;
-  transition: border-color 0.2s, width 0.2s;
+  padding: 7px 4px;
+  transition: width 0.2s;
 }
 #axtaris:focus {
-  border-color: var(--ag);
-  width: 300px;
+  width: 230px;
 }
 .kateqoriyalar {
   display: flex;
@@ -397,9 +427,15 @@ footer a:hover {
   .esas-qurulus {
     grid-template-columns: 1fr;
   }
+  .ust-zolaq {
+    flex-wrap: wrap;
+  }
+  .axtaris-qrupu {
+    width: 100%;
+  }
   #axtaris,
   #axtaris:focus {
-    width: 160px;
+    width: 100%;
   }
   .manset-karti {
     height: 270px;
@@ -414,7 +450,13 @@ footer a:hover {
 <header class="ust-hisse">
   <div class="konteyner ust-zolaq">
     <a href="./" class="loqo">Xəbər<span>Az</span></a>
-    <input id="axtaris" type="search" placeholder="Xəbər axtar...">
+    <div class="axtaris-qrupu">
+      <select id="axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
+        <option value="title">Başlığa görə</option>
+        <option value="category">Kateqoriyaya görə</option>
+      </select>
+      <input id="axtaris" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
+    </div>
   </div>
   <nav class="konteyner kateqoriyalar" id="kateqoriyalar"></nav>
 </header>
@@ -471,9 +513,19 @@ const kartHtml = (n, i) => `
   </article>`;
 
 function xeberleriGoster() {
-  const siyahisi = butunXeberler.filter((n) =>
-    (secilmisKateqoriya === "Hamısı" || n.category === secilmisKateqoriya) &&
-    (n.title || "").toLowerCase().includes(axtarisSozu));
+  const axtarisTipi = document.getElementById("axtaris-tipi") ? document.getElementById("axtaris-tipi").value : "title";
+  const soz = axtarisSozu.trim().toLowerCase();
+
+  const siyahisi = butunXeberler.filter((n) => {
+    const kateqoriyaUygun = (secilmisKateqoriya === "Hamısı" || n.category === secilmisKateqoriya);
+    if (!kateqoriyaUygun) return false;
+    if (!soz) return true;
+
+    if (axtarisTipi === "category") {
+      return (n.category || "").toLowerCase().includes(soz);
+    }
+    return (n.title || "").toLowerCase().includes(soz);
+  });
 
   const [birinci, ...qalanlar] = siyahisi;
   document.getElementById("manset").innerHTML = birinci ? `
@@ -483,7 +535,7 @@ function xeberleriGoster() {
       <h1>${esc(birinci.title)}</h1><small>${esc(birinci.Date)} · 👁 ${birinci.View ?? 0}</small></div>
     </article>` : "";
   document.getElementById("xeber-toru").innerHTML = qalanlar.map(kartHtml).join("");
-  document.getElementById("veziyyet-metni").textContent = siyahisi.length ? "" : "Xəbər tapılmadı.";
+  document.getElementById("veziyyet-metni").textContent = siyahisi.length ? "" : "Məlumat tapılmadı";
 }
 
 function coxOxunanlariGoster() {
@@ -530,10 +582,21 @@ document.addEventListener("click", (e) => {
 });
 
 document.addEventListener("keydown", (e) => e.key === "Escape" && modaliBagla());
-document.getElementById("axtaris").addEventListener("input", (e) => {
+
+const axtarisInputEl = document.getElementById("axtaris");
+const axtarisTipiEl = document.getElementById("axtaris-tipi");
+
+axtarisInputEl.addEventListener("input", (e) => {
   axtarisSozu = e.target.value.toLowerCase();
   xeberleriGoster();
 });
+
+if (axtarisTipiEl) {
+  axtarisTipiEl.addEventListener("change", () => {
+    axtarisInputEl.placeholder = axtarisTipiEl.value === "category" ? "Kateqoriyaya görə axtar..." : "Başlığa görə axtar...";
+    xeberleriGoster();
+  });
+}
 
 (async () => {
   try {
