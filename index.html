@@ -80,44 +80,24 @@ body {
   background: var(--kart-arxaplan);
   border: 1px solid var(--xett);
   border-radius: 20px;
-  padding: 2px 8px 2px 12px;
+  padding: 2px 14px;
   transition: border-color 0.2s;
 }
 .axtaris-qrupu:focus-within {
   border-color: var(--ag);
 }
-.axtaris-select {
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--xett);
-  color: var(--solgun);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 6px 8px 6px 0;
-  margin-right: 8px;
-  outline: none;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.axtaris-select:hover, .axtaris-select:focus {
-  color: var(--ag);
-}
-.axtaris-select option {
-  background: var(--panel-arxaplan);
-  color: var(--metn);
-}
 #axtaris {
   border: none;
   background: transparent;
   color: var(--metn);
-  width: 170px;
+  width: 220px;
   outline: none;
   font-size: 14px;
-  padding: 7px 4px;
+  padding: 8px 4px;
   transition: width 0.2s;
 }
 #axtaris:focus {
-  width: 230px;
+  width: 280px;
 }
 .kateqoriyalar {
   display: flex;
@@ -451,13 +431,7 @@ footer a:hover {
   <div class="konteyner ust-zolaq">
     <a href="./" class="loqo">Xəbər<span>Az</span></a>
     <div class="axtaris-qrupu">
-      <select id="axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
-        <option value="title">Başlığa görə</option>
-        <option value="category">Kateqoriyaya görə</option>
-        <option value="Date">Tarixə görə</option>
-        <option value="View">Baxış sayına görə</option>
-      </select>
-      <input id="axtaris" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
+      <input id="axtaris" type="search" placeholder="Xəbər, kateqoriya və ya tarix axtar..." autocomplete="off">
     </div>
   </div>
   <nav class="konteyner kateqoriyalar" id="kateqoriyalar"></nav>
@@ -515,7 +489,6 @@ const kartHtml = (n, i) => `
   </article>`;
 
 function xeberleriGoster() {
-  const axtarisTipi = document.getElementById("axtaris-tipi") ? document.getElementById("axtaris-tipi").value : "title";
   const soz = axtarisSozu.trim().toLowerCase();
 
   const siyahisi = butunXeberler.filter((n) => {
@@ -523,16 +496,12 @@ function xeberleriGoster() {
     if (!kateqoriyaUygun) return false;
     if (!soz) return true;
 
-    if (axtarisTipi === "category") {
-      return (n.category || "").toLowerCase().includes(soz);
-    }
-    if (axtarisTipi === "Date") {
-      return (n.Date || "").toLowerCase().includes(soz);
-    }
-    if (axtarisTipi === "View") {
-      return String(n.View ?? 0).toLowerCase().includes(soz);
-    }
-    return (n.title || "").toLowerCase().includes(soz);
+    return (
+      (n.title || "").toLowerCase().includes(soz) ||
+      (n.category || "").toLowerCase().includes(soz) ||
+      (n.Date || "").toLowerCase().includes(soz) ||
+      String(n.View ?? 0).toLowerCase().includes(soz)
+    );
   });
 
   const [birinci, ...qalanlar] = siyahisi;
@@ -591,26 +560,10 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => e.key === "Escape" && modaliBagla());
 
-const axtarisInputEl = document.getElementById("axtaris");
-const axtarisTipiEl = document.getElementById("axtaris-tipi");
-
-axtarisInputEl.addEventListener("input", (e) => {
+document.getElementById("axtaris").addEventListener("input", (e) => {
   axtarisSozu = e.target.value.toLowerCase();
   xeberleriGoster();
 });
-
-if (axtarisTipiEl) {
-  const placeholderler = {
-    title: "Başlığa görə axtar...",
-    category: "Kateqoriyaya görə axtar...",
-    Date: "Tarixə görə axtar...",
-    View: "Baxış sayına görə axtar...",
-  };
-  axtarisTipiEl.addEventListener("change", () => {
-    axtarisInputEl.placeholder = placeholderler[axtarisTipiEl.value] || "Axtar...";
-    xeberleriGoster();
-  });
-}
 
 (async () => {
   try {

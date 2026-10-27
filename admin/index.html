@@ -247,40 +247,20 @@ h2 small {
   background: var(--panel-arxaplan);
   border: 1px solid var(--xett);
   border-radius: 8px;
-  padding: 2px 8px 2px 10px;
+  padding: 2px 12px;
   transition: border-color 0.2s;
 }
 .axtaris-qrupu:focus-within {
   border-color: var(--ag);
 }
-.axtaris-select {
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--xett);
-  color: var(--solgun);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 6px 8px 6px 0;
-  margin-right: 8px;
-  outline: none;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.axtaris-select:hover, .axtaris-select:focus {
-  color: var(--ag);
-}
-.axtaris-select option {
-  background: var(--kart-arxaplan);
-  color: var(--metn);
-}
 #admin-axtaris-input {
   border: none;
   background: transparent;
   color: var(--metn);
-  width: 170px;
+  width: 220px;
   outline: none;
   font-size: 13px;
-  padding: 6px 4px;
+  padding: 7px 4px;
 }
 .duyme {
   background: var(--ag);
@@ -652,13 +632,7 @@ pre {
         <h2>Xəbərlər <small id="xeber-sayi"></small></h2>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <div class="axtaris-qrupu">
-            <select id="admin-axtaris-tipi" class="axtaris-select" title="Axtarış meyarı">
-              <option value="title">Başlığa görə</option>
-              <option value="category">Kateqoriyaya görə</option>
-              <option value="Date">Tarixə görə</option>
-              <option value="View">Baxış sayına görə</option>
-            </select>
-            <input id="admin-axtaris-input" type="search" placeholder="Başlığa görə axtar..." autocomplete="off">
+            <input id="admin-axtaris-input" type="search" placeholder="Xəbər, kateqoriya və ya tarix axtar..." autocomplete="off">
           </div>
           <button id="yeni-xeber-ac-duyme" class="duyme">➕ Əlavə et (API)</button>
         </div>
@@ -820,21 +794,16 @@ document.getElementById("cixis-duyme").addEventListener("click", () => {
 
 function cedveliYenile() {
   const setirler = document.getElementById("cedvel-setirleri");
-  const axtarisTipi = document.getElementById("admin-axtaris-tipi") ? document.getElementById("admin-axtaris-tipi").value : "title";
   const soz = (document.getElementById("admin-axtaris-input")?.value || "").trim().toLowerCase();
 
   const filtrlenmis = xeberSiyahisi.filter((n) => {
     if (!soz) return true;
-    if (axtarisTipi === "category") {
-      return (n.category || "").toLowerCase().includes(soz);
-    }
-    if (axtarisTipi === "Date") {
-      return (n.Date || "").toLowerCase().includes(soz);
-    }
-    if (axtarisTipi === "View") {
-      return String(n.View ?? 0).toLowerCase().includes(soz);
-    }
-    return (n.title || "").toLowerCase().includes(soz);
+    return (
+      (n.title || "").toLowerCase().includes(soz) ||
+      (n.category || "").toLowerCase().includes(soz) ||
+      (n.Date || "").toLowerCase().includes(soz) ||
+      String(n.View ?? 0).toLowerCase().includes(soz)
+    );
   });
 
   if (filtrlenmis.length === 0) {
@@ -864,24 +833,8 @@ async function xeberleriYukle() {
 }
 
 const adminAxtarisInput = document.getElementById("admin-axtaris-input");
-const adminAxtarisTipi = document.getElementById("admin-axtaris-tipi");
-
 if (adminAxtarisInput) {
   adminAxtarisInput.addEventListener("input", cedveliYenile);
-}
-if (adminAxtarisTipi) {
-  const placeholderler = {
-    title: "Başlığa görə axtar...",
-    category: "Kateqoriyaya görə axtar...",
-    Date: "Tarixə görə axtar...",
-    View: "Baxış sayına görə axtar...",
-  };
-  adminAxtarisTipi.addEventListener("change", () => {
-    if (adminAxtarisInput) {
-      adminAxtarisInput.placeholder = placeholderler[adminAxtarisTipi.value] || "Axtar...";
-    }
-    cedveliYenile();
-  });
 }
 
 function payloadGuncelle() {
